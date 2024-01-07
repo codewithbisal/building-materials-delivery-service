@@ -19,13 +19,13 @@ def check_single_sack():
 
         if weight_limits[0] < weight < weight_limits[1]:
             print("Sack accepted. Contents: {}, Weight: {} kg".format(contents, weight))
-            return weight
+            return contents, weight
         else:
             print("Rejected: Weight out of range.")
-            return 0
+            return None, 0
     else:
         print("Rejected: Invalid contents.")
-        return 0
+        return None, 0
 
 def check_customer_order():
     total_weight = 0
@@ -38,13 +38,25 @@ def check_customer_order():
     num_sand = int(input("Enter the number of sand sacks: "))
 
     for _ in range(num_cement):
-        total_weight += check_single_sack()
+        contents, weight = check_single_sack()
+        if contents:
+            total_weight += weight
+        else:
+            sacks_rejected += 1
 
     for _ in range(num_gravel):
-        total_weight += check_single_sack()
+        contents, weight = check_single_sack()
+        if contents:
+            total_weight += weight
+        else:
+            sacks_rejected += 1
 
     for _ in range(num_sand):
-        total_weight += check_single_sack()
+        contents, weight = check_single_sack()
+        if contents:
+            total_weight += weight
+        else:
+            sacks_rejected += 1
 
     return total_weight, sacks_rejected
 
