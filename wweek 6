@@ -1,0 +1,69 @@
+# Constants for weight limits
+MIN_WEIGHT_CEMENT = 24.9
+MAX_WEIGHT_CEMENT = 25.1
+MIN_WEIGHT_SAND_GRAVEL = 49.9
+MAX_WEIGHT_SAND_GRAVEL = 50.1
+
+# Prices for sacks
+PRICE_CEMENT = 3
+PRICE_GRAVEL = 2
+PRICE_SAND = 2
+PRICE_SPECIAL_PACK = 10
+
+def check_single_sack():
+    contents = input("Enter the contents of the sack (C for Cement, G for Gravel, S for Sand): ").upper()
+    weight = float(input("Enter the weight of the sack in kilograms: "))
+
+    if contents in ['C', 'G', 'S']:
+        weight_limits = (MIN_WEIGHT_CEMENT, MAX_WEIGHT_CEMENT) if contents == 'C' else (MIN_WEIGHT_SAND_GRAVEL, MAX_WEIGHT_SAND_GRAVEL)
+
+        if weight_limits[0] < weight < weight_limits[1]:
+            print("Sack accepted. Contents: {}, Weight: {} kg".format(contents, weight))
+            return weight
+        else:
+            print("Rejected: Weight out of range.")
+            return 0
+    else:
+        print("Rejected: Invalid contents.")
+        return 0
+
+def check_customer_order():
+    total_weight = 0
+    sacks_rejected = 0
+
+    global num_cement, num_gravel, num_sand  # declare global variables
+
+    num_cement = int(input("Enter the number of cement sacks: "))
+    num_gravel = int(input("Enter the number of gravel sacks: "))
+    num_sand = int(input("Enter the number of sand sacks: "))
+
+    for _ in range(num_cement):
+        total_weight += check_single_sack()
+
+    for _ in range(num_gravel):
+        total_weight += check_single_sack()
+
+    for _ in range(num_sand):
+        total_weight += check_single_sack()
+
+    return total_weight, sacks_rejected
+
+def calculate_order_price(total_weight):
+    regular_price = (PRICE_CEMENT + PRICE_GRAVEL + PRICE_SAND) * total_weight
+
+    num_special_packs = min(num_cement, num_sand // 2, num_gravel // 2)
+    discount_price = num_special_packs * PRICE_SPECIAL_PACK
+
+    new_price = regular_price - discount_price if discount_price > 0 else regular_price
+
+    print("\nRegular Price: ${:.2f}".format(regular_price))
+    if discount_price > 0:
+        print("Discount Price (Special Packs): ${:.2f}".format(discount_price))
+        print("New Price: ${:.2f}".format(new_price))
+        print("Amount Saved: ${:.2f}".format(regular_price - new_price))
+
+if __name__ == "__main__":
+    total_weight, sacks_rejected = check_customer_order()
+    print("\nTotal Order Weight: {} kg".format(total_weight))
+    print("Number of Sacks Rejected: {}".format(sacks_rejected))
+    calculate_order_price(total_weight)
